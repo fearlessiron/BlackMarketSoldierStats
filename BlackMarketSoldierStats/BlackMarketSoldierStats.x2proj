@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Guid>f94db625-047c-484b-a1cb-43e16256a377</Guid>
+    <Name>BlackMarketSoldierStats</Name>
+    <Description>Shows the stats of soldiers offered at the Black Market.</Description>
+    <SteamPublishID>0</SteamPublishID>
+    <AssemblyName>BlackMarketSoldierStats</AssemblyName>
+    <RootNamespace>BlackMarketSoldierStats</RootNamespace>
+    <ProjectGuid>{bab4364d-968e-4a3b-be14-9057707c3ff9}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Config\**" />
+    <Content Include="Content\**" />
+    <Content Include="Localization\**" />
+    <Content Include="Src\**" />
+    <Content Include="README.md" />
+    <Content Include="ModPreview.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Content\" />
+    <Folder Include="Localization\" />
+    <Folder Include="Src\" />
+    <Folder Include="Src\BlackMarketSoldierStats\" />
+    <Folder Include="Src\BlackMarketSoldierStats\Classes\" />
+    <Folder Include="Src\ModConfigMenuAPI\" />
+    <Folder Include="Src\ModConfigMenuAPI\Classes\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
+</Project>
