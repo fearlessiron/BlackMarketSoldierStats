@@ -23,8 +23,6 @@ var public localized string	GroupGeneralSettings_Label;
 
 event OnInit(UIScreen Screen)
 {
-    local string Version;
-
 	if (MCM_API(Screen) != none)
 	{
         `MCM_API_Register(Screen, ClientModCallback);
