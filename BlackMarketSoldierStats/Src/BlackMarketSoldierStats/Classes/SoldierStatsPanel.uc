@@ -1,5 +1,7 @@
 class SoldierStatsPanel extends UIPanel;
 
+`include(BlackMarketSoldierStats\Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci)
+
 var UIBlackMarket_Buy BlackMarketBuy;
 var X2CharacterTemplateManager TemplateManager;
 
@@ -19,6 +21,9 @@ function Init(UIBlackMarket_Buy TheScreen)
 
     BlackMarketBuy = TheScreen;
     TemplateManager = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager();
+
+    PanelX = `GETMCMVAR(PANEL_X);
+    PanelY = `GETMCMVAR(PANEL_Y);
 
     OriginalOnSelectionChanged = BlackMarketBuy.List.OnSelectionChanged;
     BlackMarketBuy.List.OnSelectionChanged = OnSelectionChanged;
@@ -124,11 +129,11 @@ function UISummary_ItemStat GetStat(XComGameState_Unit Unit, ECharStatType StatT
     UnitStat = Unit.GetCurrentStat(StatType);
     BaseStat = CharacterTemplate.CharacterBaseStats[StatType];
 
-    if (UnitStat < BaseStat)
+    if (UnitStat < BaseStat && `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE))
     {
         Colour = eUIState_Bad;
     }
-    else if (UnitStat > BaseStat)
+    else if (UnitStat > BaseStat && `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE))
     {
         Colour = eUIState_Good;
     }
