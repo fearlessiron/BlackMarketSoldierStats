@@ -10,16 +10,18 @@ var config int VERSION_CFG;
 
 // Localization Strings for Mod Config Menu Items
 var public localized string	SettingsPage_Label, PageTitle_Label;
-var public localized string	GroupGeneralSettings_Label;
+var public localized string	GroupGeneralSettings_Label, UISettings_Label;
 
 // Mod Config Menu boilerplate
 `include(BlackMarketSoldierStats/Src/ModConfigMenuAPI/MCM_API_Includes.uci)
-
-// `MCM_API_AutoCheckboxVars(XXXX);
+`MCM_API_AutoCheckboxVars(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+`MCM_API_AutoSliderVars(PANEL_X);
+`MCM_API_AutoSliderVars(PANEL_Y);
 
 `include(BlackMarketSoldierStats/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
-
-// `MCM_API_AutoCheckboxFns(XXXX);
+`MCM_API_AutoCheckboxFns(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+`MCM_API_AutoSliderFns(PANEL_X);
+`MCM_API_AutoSliderFns(PANEL_Y);
 
 event OnInit(UIScreen Screen)
 {
@@ -33,22 +35,30 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 {
     // Build the settings UI
     local MCM_API_SettingsPage Page;
-    local MCM_API_SettingsGroup Group;
+    local MCM_API_SettingsGroup GeneralGroup, UIGroup;
 
     LoadSavedSettings();
 
     Page = ConfigAPI.NewSettingsPage(SettingsPage_Label);
     Page.SetPageTitle(PageTitle_Label);
     Page.SetSaveHandler(SaveButtonClicked);
+    Page.EnableResetButton(ResetButtonClicked);
 
-    Group = Page.AddGroup('BMSS_GeneralSettings', GroupGeneralSettings_Label);
+    GeneralGroup = Page.AddGroup('BMSS_GeneralSettings', GroupGeneralSettings_Label);
+	`MCM_API_AutoAddCheckbox(GeneralGroup, HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+
+    UIGroup = Page.AddGroup('BMSS_UISettings', UISettings_Label);
+   	`MCM_API_AutoAddSlider(UIGroup, PANEL_X, -2000, 2000, 5);
+   	`MCM_API_AutoAddSlider(UIGroup, PANEL_Y, 0, 4000, 5);
 
     Page.ShowSettings();
 }
 
 simulated function LoadSavedSettings()
 {
-    // XXXX = `GETMCMVAR(XXXX);
+    PANEL_X = `GETMCMVAR(PANEL_X);
+    PANEL_Y = `GETMCMVAR(PANEL_Y);
+    HIGHLIGHT_ABOVE_BELOW_AVERAGE = `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
 }
 
 function SaveButtonClicked(MCM_API_SettingsPage Page)
@@ -59,7 +69,9 @@ function SaveButtonClicked(MCM_API_SettingsPage Page)
 
 simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
 {
-	// `MCM_API_AutoReset(XXXX);
+	`MCM_API_AutoReset(PANEL_X);
+	`MCM_API_AutoReset(PANEL_Y);
+	`MCM_API_AutoReset(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
 }
 
 defaultproperties
