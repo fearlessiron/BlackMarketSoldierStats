@@ -1,8 +1,8 @@
 class BlackMarketSoldierStats_Settings extends UIScreenListener config(BlackMarketSoldierStats_Settings);
 
 // Mod version
-const VERSION_MAJOR = 0;
-const VERSION_MINOR = 1;
+const VERSION_MAJOR = 1;
+const VERSION_MINOR = 0;
 const VERSION_PATCH = 0;
 
 // Config version
