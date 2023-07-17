@@ -7,8 +7,12 @@ var X2CharacterTemplateManager TemplateManager;
 
 var XComGameState_Unit SelectedUnit;
 var X2CharacterTemplate CharacterTemplate;
+var XComGameState_Reward_BMSS PersonellRewardState;
 
 var UIPanel StatsContainer;
+var UIStatList StatList;
+var UIButton RevealButton;
+var UIText RevealCostLabel;
 
 var float PanelX, PanelY, PanelWidth, PanelHeight;
 
@@ -58,23 +62,55 @@ function SetSelectedUnit(int ItemIndex)
         {
             return;
         }
-        
+
         SelectedUnit = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
         CharacterTemplate = TemplateManager.FindCharacterTemplate(SelectedUnit.GetMyTemplateName());
+        PersonellRewardState = GetPersonellRewardState();
     }
+}
+
+function XComGameState_Reward_BMSS GetPersonellRewardState()
+{
+    local XComGameState_Reward_BMSS RevealState;
+
+    foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Reward_BMSS', RevealState)
+    {
+        if (RevealState.RewardRef.ObjectID == SelectedUnit.GetReference().ObjectID)
+        {
+            return RevealState;
+        }
+    }
+
+    return none;
+}
+
+function bool IsRevealCostEnabled()
+{
+    return `GETMCMVAR(REVEAL_COST_ENABLED);
 }
 
 function UpdateStats()
 {
-    local UIStatList StatList;
     local UIBGBox BGBox;
     local UIX2PanelHeader Header;
-    local array<UISummary_ItemStat> Stats;
+    local string RevealButtonText, CostString;
 
     if (StatsContainer != none)
     {
         StatsContainer.Remove();
         StatsContainer = none;
+    }
+
+    if (StatList != none)
+    {
+        StatList.Remove();
+        StatList = none;
+    }
+
+    if (RevealButton != none)
+    {
+        RevealButton.Remove();
+        RevealButton = none;
     }
 
     if (SelectedUnit == none || !SelectedUnit.IsSoldier())
@@ -105,6 +141,91 @@ function UpdateStats()
     StatList.PADDING_RIGHT = 10;
     StatList.SetY(50);
 
+    if (IsRevealCostEnabled())
+    {
+        RevealButtonText = class'UIAdventOperations'.default.m_strReveal;
+        CostString = class'UIUtilities_Strategy'.static.GetStrategyCostString(GetRevealCost(), GetCostScalars());
+        CostString = class'UIUtilities_Text'.static.AddFontInfo(CostString, false, true, , 24);	
+
+        RevealButton = Spawn(class'UIButton', StatsContainer);
+        RevealButton.InitButton('RevealButton', RevealButtonText, OnRevealButtonClicked);
+        RevealButton.OnSizeRealized = OnButtonSizeRealized;
+
+        RevealCostLabel = Spawn(class'UIText', StatsContainer);
+        RevealCostLabel.InitText();
+        RevealCostLabel.SetText(class'UIUtilities_Text'.static.AlignCenter(CostString));
+        RevealCostLabel.SetWidth(PanelWidth);
+        RevealCostLabel.SetY((40 + PanelHeight) / 2.0);
+
+        if (PersonellRewardState != none && PersonellRewardState.RevealCostPaid)
+        {
+            RevealButton.Remove();
+            RevealCostLabel.Remove();
+            RevealStats();
+        }
+    }
+    else
+    {
+        RevealStats();
+    }
+}
+
+simulated function array<StrategyCostScalar> GetCostScalars()
+{
+    local array<StrategyCostScalar> CostScalars;
+
+    CostScalars.Length = 0;
+
+    return CostScalars;
+}
+
+simulated function StrategyCost GetRevealCost()
+{
+    local StrategyCost RevealCost;
+    local ArtifactCost ResourceCost;
+
+    RevealCost.ResourceCosts.Length = 0;
+    ResourceCost.ItemTemplateName = name(`GETMCMVAR(REVEAL_COST_RESOURCE));
+    ResourceCost.Quantity = `GETMCMVAR(REVEAL_COST_QUANTITY);
+    RevealCost.ResourceCosts.AddItem(ResourceCost);
+
+    return RevealCost;
+}
+
+simulated function OnRevealButtonClicked(UIButton Button)
+{
+    local XComGameState_HeadquartersXCom XComHQ;
+    local XComGameState NewGameState;
+    local XComGameState_Reward_BMSS RewardPaidState;
+
+    XComHQ = `XCOMHQ;
+
+    NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Reveal Black Market Soldier Stats");
+    XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+    XComHQ = XComGameState_HeadquartersXCom(NewGameState.CreateStateObject(class'XComGameState_HeadquartersXCom', XComHQ.ObjectID));
+    NewGameState.AddStateObject(XComHQ);
+
+    XComHQ.PayStrategyCost(NewGameState, GetRevealCost(), GetCostScalars());
+
+    RewardPaidState = XComGameState_Reward_BMSS(NewGameState.CreateStateObject(class'XComGameState_Reward_BMSS'));
+    RewardPaidState.RewardRef = SelectedUnit.GetReference();
+    RewardPaidState.RevealCostPaid = true;
+    NewGameState.AddStateObject(RewardPaidState);
+
+    `XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+
+    Button.Remove();
+    RevealCostLabel.Remove();
+
+    `HQPRES.m_kAvengerHUD.UpdateResources();
+
+    RevealStats();
+}
+
+simulated function RevealStats()
+{
+    local array<UISummary_ItemStat> Stats;
+
     Stats.AddItem(GetStat(SelectedUnit, eStat_HP));
     Stats.AddItem(GetStat(SelectedUnit, eStat_Will));
     Stats.AddItem(GetStat(SelectedUnit, eStat_Offense));
@@ -118,6 +239,12 @@ function UpdateStats()
     }
 
     StatList.RefreshData(Stats, false);
+}
+
+simulated function OnButtonSizeRealized()
+{
+    RevealButton.SetX((PanelWidth - RevealButton.Width) / 2.0);
+    RevealButton.SetY((PanelHeight - RevealButton.Height) / 2.0);
 }
 
 function UISummary_ItemStat GetStat(XComGameState_Unit Unit, ECharStatType StatType)
