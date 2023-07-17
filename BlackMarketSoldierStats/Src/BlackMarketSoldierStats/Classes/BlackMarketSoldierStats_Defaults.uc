@@ -9,3 +9,8 @@ var config bool HIGHLIGHT_ABOVE_BELOW_AVERAGE;
 // Panel location
 var config int PANEL_X;
 var config int PANEL_Y;
+
+// Reveal cost
+var config bool REVEAL_COST_ENABLED;
+var config string REVEAL_COST_RESOURCE;
+var config int REVEAL_COST_QUANTITY;
