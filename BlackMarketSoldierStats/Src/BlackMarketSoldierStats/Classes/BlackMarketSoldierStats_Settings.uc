@@ -15,6 +15,7 @@ var public localized string	GroupGeneralSettings_Label, UISettings_Label;
 // Mod Config Menu boilerplate
 `include(BlackMarketSoldierStats/Src/ModConfigMenuAPI/MCM_API_Includes.uci)
 `MCM_API_AutoCheckboxVars(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+`MCM_API_AutoCheckboxVars(PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY);
 `MCM_API_AutoSliderVars(PANEL_X);
 `MCM_API_AutoSliderVars(PANEL_Y);
 `MCM_API_AutoCheckboxVars(REVEAL_COST_ENABLED);
@@ -23,6 +24,7 @@ var public localized string	GroupGeneralSettings_Label, UISettings_Label;
 
 `include(BlackMarketSoldierStats/Src/ModConfigMenuAPI/MCM_API_CfgHelpers.uci)
 `MCM_API_AutoCheckboxFns(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+`MCM_API_AutoCheckboxFns(PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY, 3);
 `MCM_API_AutoSliderFns(PANEL_X);
 `MCM_API_AutoSliderFns(PANEL_Y);
 `MCM_API_AutoCheckboxFns(REVEAL_COST_ENABLED, 2);
@@ -58,6 +60,7 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 
     GeneralGroup = Page.AddGroup('BMSS_GeneralSettings', GroupGeneralSettings_Label);
     `MCM_API_AutoAddCheckbox(GeneralGroup, HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+    `MCM_API_AutoAddCheckbox(GeneralGroup, PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY);
     `MCM_API_AutoAddCheckbox(GeneralGroup, REVEAL_COST_ENABLED);
     `MCM_API_AutoAddDropdown(GeneralGroup, REVEAL_COST_RESOURCE, RevealCostResourceOptions);
     `MCM_API_AutoAddSlider(GeneralGroup, REVEAL_COST_QUANTITY, 1, 500, 1);
@@ -74,6 +77,7 @@ simulated function LoadSavedSettings()
     PANEL_X = `GETMCMVAR(PANEL_X);
     PANEL_Y = `GETMCMVAR(PANEL_Y);
     HIGHLIGHT_ABOVE_BELOW_AVERAGE = `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+    PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY = `GETMCMVAR(PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY);
     REVEAL_COST_ENABLED = `GETMCMVAR(REVEAL_COST_ENABLED);
     REVEAL_COST_RESOURCE = `GETMCMVAR(REVEAL_COST_RESOURCE);
     REVEAL_COST_QUANTITY = `GETMCMVAR(REVEAL_COST_QUANTITY);
@@ -90,6 +94,7 @@ simulated function ResetButtonClicked(MCM_API_SettingsPage Page)
     `MCM_API_AutoReset(PANEL_X);
     `MCM_API_AutoReset(PANEL_Y);
     `MCM_API_AutoReset(HIGHLIGHT_ABOVE_BELOW_AVERAGE);
+    `MCM_API_AutoReset(PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY);
     `MCM_API_AutoReset(REVEAL_COST_ENABLED);
     `MCM_API_AutoReset(REVEAL_COST_RESOURCE);
     `MCM_API_AutoReset(REVEAL_COST_QUANTITY);

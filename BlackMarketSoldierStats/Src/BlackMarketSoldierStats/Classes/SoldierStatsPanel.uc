@@ -235,11 +235,11 @@ simulated function RevealStats()
     Stats.AddItem(GetStat(SelectedUnit, eStat_Hacking));
     Stats.AddItem(GetStat(SelectedUnit, eStat_Dodge));
     Stats.AddItem(GetStat(SelectedUnit, eStat_Defense));
-    if (SelectedUnit.IsPsiOperative() || (SelectedUnit.GetRank() == 0 && !SelectedUnit.CanRankUpSoldier() && `XCOMHQ.IsTechResearched('AutopsySectoid')))
+    if (!`GETMCMVAR(PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY) || `XCOMHQ.IsTechResearched('AutopsySectoid'))
     {
         Stats.AddItem(GetStat(SelectedUnit, eStat_PsiOffense));
     }
-
+ 
     StatList.RefreshData(Stats, false);
 }
 

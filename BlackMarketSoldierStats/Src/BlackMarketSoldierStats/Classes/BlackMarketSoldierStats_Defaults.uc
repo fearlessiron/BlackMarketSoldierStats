@@ -14,3 +14,6 @@ var config int PANEL_Y;
 var config bool REVEAL_COST_ENABLED;
 var config string REVEAL_COST_RESOURCE;
 var config int REVEAL_COST_QUANTITY;
+
+// Require Sectoid autopsy before showing Psi Offense stat
+var config bool PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY;
