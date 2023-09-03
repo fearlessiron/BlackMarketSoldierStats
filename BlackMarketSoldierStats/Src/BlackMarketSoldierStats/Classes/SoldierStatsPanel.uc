@@ -7,6 +7,7 @@ var X2CharacterTemplateManager TemplateManager;
 
 var XComGameState_Unit SelectedUnit;
 var X2CharacterTemplate CharacterTemplate;
+var X2SoldierClassTemplate SoldierClassTemplate;
 var XComGameState_Reward_BMSS PersonellRewardState;
 
 var UIPanel StatsContainer;
@@ -65,6 +66,7 @@ function SetSelectedUnit(int ItemIndex)
 
         SelectedUnit = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
         CharacterTemplate = TemplateManager.FindCharacterTemplate(SelectedUnit.GetMyTemplateName());
+        SoldierClassTemplate = SelectedUnit.GetSoldierClassTemplate();
         PersonellRewardState = GetPersonellRewardState();
     }
 }
@@ -249,18 +251,34 @@ simulated function OnButtonSizeRealized()
 
 function UISummary_ItemStat GetStat(XComGameState_Unit Unit, ECharStatType StatType)
 {
-    local int UnitStat, BaseStat;
+    local int UnitStat, BaseStat, ProgressedStat, Rank, i, j;
     local EUIState Colour;
     local UISummary_ItemStat Stat;
+    local array<SoldierClassStatType> StatProgression;
     
     UnitStat = Unit.GetCurrentStat(StatType);
     BaseStat = CharacterTemplate.CharacterBaseStats[StatType];
+    ProgressedStat = BaseStat;
+    Rank = Unit.GetRank();
 
-    if (UnitStat < BaseStat && `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE))
+    for (i = 0; i < Rank; i++)
+    {
+        // Calculate stat progression
+        StatProgression = SoldierClassTemplate.GetStatProgression(i);
+        for(j = 0; j < StatProgression.Length; j++)
+        {
+            if (StatProgression[j].StatType == StatType)
+            {
+                ProgressedStat += StatProgression[j].StatAmount;
+            }
+        }
+    }
+
+    if (UnitStat < ProgressedStat && `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE))
     {
         Colour = eUIState_Bad;
     }
-    else if (UnitStat > BaseStat && `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE))
+    else if (UnitStat > ProgressedStat && `GETMCMVAR(HIGHLIGHT_ABOVE_BELOW_AVERAGE))
     {
         Colour = eUIState_Good;
     }
