@@ -45,11 +45,14 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
     local MCM_API_SettingsPage Page;
     local MCM_API_SettingsGroup GeneralGroup, UIGroup;
     local array<string> RevealCostResourceOptions;
+    local string Version;
+
+    Version = "v" $ VERSION_MAJOR $ "." $ VERSION_MINOR $ "." $ VERSION_PATCH;
 
     LoadSavedSettings();
 
     Page = ConfigAPI.NewSettingsPage(SettingsPage_Label);
-    Page.SetPageTitle(PageTitle_Label);
+    Page.SetPageTitle(PageTitle_Label @ Version);
     Page.SetSaveHandler(SaveButtonClicked);
     Page.EnableResetButton(ResetButtonClicked);
 
