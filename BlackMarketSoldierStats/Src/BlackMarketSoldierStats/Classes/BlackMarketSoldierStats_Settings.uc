@@ -1,4 +1,4 @@
-class BlackMarketSoldierStats_Settings extends UIScreenListener config(BlackMarketSoldierStats_Settings);
+class BlackMarketSoldierStats_Settings extends Object config(BlackMarketSoldierStats_Settings);
 
 // Mod version
 const VERSION_MAJOR = 1;
