@@ -17,3 +17,6 @@ var config int REVEAL_COST_QUANTITY;
 
 // Require Sectoid autopsy before showing Psi Offense stat
 var config bool PSI_OFFENSE_REQUIRE_SECTOID_AUTOPSY;
+
+// Print the ASCII-art banner to the log on startup
+var config bool LOG_BANNER;

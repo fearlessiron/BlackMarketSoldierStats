@@ -28,6 +28,13 @@ There is an option to hide the "Psi Offense" stat until the Sectoid autopsy
 has been completed. This option is primarily designed for players of Long War
 of the Chosen, aligning it with how displaying the stat is handled in that mod.
 
+## Logging
+
+On startup the mod prints a banner with its version to `Launch.log`. If you
+find this noisy, set `LOG_BANNER=false` in `XComBlackMarketSoldierStats_Defaults.ini`.
+Other mods can override the setting from their own config by adding that line
+under the `[BlackMarketSoldierStats.BlackMarketSoldierStats_Defaults]` section.
+
 ## Compatibility
 
 This mod can be activated for existing campaigns. It's compatible with both
